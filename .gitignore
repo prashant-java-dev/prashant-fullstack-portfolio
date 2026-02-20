@@ -1,0 +1,22 @@
+# Common
+.vscode/
+.idea/
+*.log
+.env
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+
+# Backend
+backend/prashant_portfolio/target/
+backend/prashant_portfolio/.mvn/wrapper/maven-wrapper.jar
+backend/prashant_portfolio/.env
+backend/prashant_portfolio/*.iml
+backend/prashant_portfolio/bin/
+backend/prashant_portfolio/obj/
+backend/prashant_portfolio/.settings/
+backend/prashant_portfolio/.project
+backend/prashant_portfolio/.classpath

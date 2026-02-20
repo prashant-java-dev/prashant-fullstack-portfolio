@@ -1,0 +1,32 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://localhost:27017/portfolio}
+
+# CORS Configuration
+app:
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+  mail:
+    from: ${MAIL_FROM}
+    to: ${MAIL_TO}
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL:INFO}
+    com.prashant.portfolio: ${LOGGING_LEVEL:INFO}
+

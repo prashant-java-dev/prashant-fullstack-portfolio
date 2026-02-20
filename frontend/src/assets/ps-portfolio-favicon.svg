@@ -1,0 +1,43 @@
+<svg width="32" height="32" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Dark metallic red gradient -->
+        <linearGradient id="grad-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FF4D4D" />
+            <stop offset="50%" stop-color="#B91C1C" />
+            <stop offset="100%" stop-color="#7F1D1D" />
+        </linearGradient>
+
+        <!-- Light metallic red gradient -->
+        <linearGradient id="grad-light" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FF7F7F" />
+            <stop offset="50%" stop-color="#FF3B3B" />
+            <stop offset="100%" stop-color="#B22222" />
+        </linearGradient>
+
+        <!-- Glow filter -->
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="0" stdDeviation="1.5" flood-color="#FF4D4D" flood-opacity="0.7" />
+        </filter>
+
+        <!-- Shine overlay -->
+        <radialGradient id="shine" cx="30%" cy="30%" r="50%">
+            <stop offset="0%" stop-color="white" stop-opacity="0.2" />
+            <stop offset="100%" stop-color="white" stop-opacity="0" />
+        </radialGradient>
+    </defs>
+
+    <!-- Circular Background -->
+    <circle id="bg" cx="60" cy="60" r="60" fill="#0a0a0a" />
+
+    <!-- PS Monogram -->
+    <g transform="translate(10,20)" filter="url(#glow)">
+        <path id="p-shape" d="M0,0 L0,50 L20,50 L20,28 L38,28 Q48,28 48,12 Q48,0 38,0 L0,0 Z" fill="url(#grad-dark)" />
+        <path id="s-shape" d="M55,0 Q80,0 80,20 Q80,40 55,40 Q35,40 35,60 Q35,80 55,80 Q80,80 80,60"
+            stroke="url(#grad-dark)" stroke-width="4" fill="none" />
+    </g>
+
+    <!-- Shine overlay -->
+    <ellipse cx="60" cy="40" rx="60" ry="60" fill="url(#shine)" opacity="0.3" />
+
+
+</svg>
