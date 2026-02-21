@@ -23,4 +23,9 @@ public class HealthController {
             Map.of("status", "UP", "timestamp", java.time.Instant.now().toString())
         ));
     }
+
+    @GetMapping("/")
+    public ResponseEntity<ApiResponse<String>> home() {
+        return ResponseEntity.ok(ApiResponse.success("Welcome to Prashant Portfolio API! Go to /api/health for status."));
+    }
 }
