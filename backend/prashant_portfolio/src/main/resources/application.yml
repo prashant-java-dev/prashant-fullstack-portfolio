@@ -1,10 +1,10 @@
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:8080}
 
 spring:
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/portfolio}
+      uri: ${MONGODB_URI:${MONGO_URI:mongodb://localhost:27017/portfolio}}
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
