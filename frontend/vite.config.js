@@ -4,6 +4,7 @@ import path from 'path';
 
 export default defineConfig({
     plugins: [react()],
+    base: '/prashant-fullstack-portfolio/',
     server: {
         port: 3000,
         open: true,
@@ -14,6 +15,6 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'build',
+        outDir: 'dist',
     },
 });
