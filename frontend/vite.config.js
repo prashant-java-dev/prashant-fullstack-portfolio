@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
+    base: './',
     plugins: [react()],
-    base: '/Prashant-Sharma-Portfolio/',
     server: {
         port: 3000,
         open: true,
@@ -15,6 +15,6 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'dist',
+        outDir: 'build',
     },
 });

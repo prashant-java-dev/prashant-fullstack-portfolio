@@ -2,10 +2,11 @@ name: Deploy Frontend to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
     paths:
       - 'frontend/**'
-  workflow_dispatch:
+      - '.github/workflows/**'
 
 permissions:
   contents: read
@@ -13,16 +14,13 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -30,13 +28,16 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: cd frontend && npm ci
+        run: npm ci
+        working-directory: frontend
 
       - name: Build
-        run: cd frontend && npm run build
+        run: npm run build
+        working-directory: frontend
         env:
-          VITE_API_URL: https://prashant-sharma-portfolio.up.railway.app/api
           VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          VITE_API_URL: https://prashant-sharma-portfolio.up.railway.app/api
+          VITE_API_BASE_URL: https://prashant-sharma-portfolio.up.railway.app/api
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -44,7 +45,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'frontend/dist'
+          path: frontend/build
 
       - name: Deploy to GitHub Pages
         id: deployment
