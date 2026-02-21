@@ -16,11 +16,29 @@ import java.util.Map;
 @RequestMapping("/api/health")
 public class HealthController {
 
+    private final org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+
+    public HealthController(org.springframework.data.mongodb.core.MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
     @GetMapping
     public ResponseEntity<ApiResponse<Map<String, String>>> healthCheck() {
+        String mongoStatus = "DOWN";
+        try {
+            mongoTemplate.getDb().runCommand(new org.bson.Document("ping", 1));
+            mongoStatus = "UP";
+        } catch (Exception e) {
+            mongoStatus = "DOWN (" + e.getMessage() + ")";
+        }
+
         return ResponseEntity.ok(ApiResponse.success(
-            "Application is running smoothly",
-            Map.of("status", "UP", "timestamp", java.time.Instant.now().toString())
+            "Application status",
+            Map.of(
+                "status", mongoStatus.startsWith("UP") ? "UP" : "DOWN",
+                "database", mongoStatus,
+                "timestamp", java.time.Instant.now().toString()
+            )
         ));
     }
 
