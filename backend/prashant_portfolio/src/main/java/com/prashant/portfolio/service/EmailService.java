@@ -3,16 +3,20 @@ package com.prashant.portfolio.service;
 import com.prashant.portfolio.config.EmailConfig;
 import com.prashant.portfolio.dto.ContactRequestDto;
 import com.prashant.portfolio.exception.BusinessException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 /**
  * Service for handling email operations.
  * Sends contact form submissions via email.
+ * Reply-To is set to the user's email so Prashant can directly reply to them.
  */
 @Service
 public class EmailService {
@@ -22,7 +26,6 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final EmailConfig emailConfig;
 
-    // Constructor injection (recommended over field injection)
     public EmailService(JavaMailSender mailSender, EmailConfig emailConfig) {
         this.mailSender = mailSender;
         this.emailConfig = emailConfig;
@@ -30,41 +33,63 @@ public class EmailService {
 
     /**
      * Sends a contact form email.
-     * @param request Contact form data
-     * @throws BusinessException if email sending fails
+     * From    : system email (required by Gmail SMTP)
+     * Reply-To: user's email (so Prashant's reply goes directly to the sender)
      */
     public void sendContactEmail(ContactRequestDto request) {
         try {
-            SimpleMailMessage mail = new SimpleMailMessage();
-            mail.setFrom(emailConfig.getFromEmail());
-            mail.setTo(emailConfig.getToEmail());
-            mail.setSubject("Portfolio Contact: " + request.getSubject());
-            mail.setText(buildEmailBody(request));
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
 
-            mailSender.send(mail);
-            logger.info("Contact email sent successfully from: {}", request.getEmail());
+            // From must be the authenticated Gmail account
+            helper.setFrom(emailConfig.getFromEmail());
 
-        } catch (Exception e) {
+            // ✅ Reply-To = user's email — clicking "Reply" will open user's email
+            helper.setReplyTo(new InternetAddress(request.getEmail(), request.getName()));
+
+            // Send to Prashant's inbox
+            helper.setTo(emailConfig.getToEmail());
+
+            // Subject clearly shows who sent it
+            helper.setSubject("📬 " + request.getName() + " | " + request.getSubject());
+
+            // Email body
+            helper.setText(buildEmailBody(request), false);
+
+            mailSender.send(mimeMessage);
+            logger.info("Contact email sent. Reply-To set to: {}", request.getEmail());
+
+        } catch (MessagingException e) {
             logger.error("Failed to send contact email from: {}", request.getEmail(), e);
-            throw new BusinessException("Failed to send email. Please try again later.", 
+            throw new BusinessException("Failed to send email. Please try again later.",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     /**
-     * Builds the email body from contact form data.
+     * Builds a clear, well-formatted email body.
      */
     private String buildEmailBody(ContactRequestDto request) {
         return String.format(
-            "New Contact Form Submission\n\n" +
-            "From: %s (%s)\n" +
-            "Subject: %s\n\n" +
-            "Message:\n%s",
+            "============================================\n" +
+            "  NEW MESSAGE FROM YOUR PORTFOLIO WEBSITE  \n" +
+            "============================================\n\n" +
+            "  Name    : %s\n" +
+            "  Email   : %s\n" +
+            "  Subject : %s\n\n" +
+            "--------------------------------------------\n" +
+            "  Message :\n\n" +
+            "  %s\n\n" +
+            "--------------------------------------------\n" +
+            "  Reply directly to this email to respond\n" +
+            "  to %s at %s\n" +
+            "============================================\n",
             request.getName(),
             request.getEmail(),
             request.getSubject(),
-            request.getMessage()
+            request.getMessage(),
+            request.getName(),
+            request.getEmail()
         );
     }
 }
-
